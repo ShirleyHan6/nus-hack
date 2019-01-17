@@ -27,6 +27,7 @@ def homepage():
     else:
         return render_template('home.html', videos=videos)
 
+
 @app.route('/add', methods=['POST', 'GET'])
 def add():
     frame = ''
