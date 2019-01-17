@@ -31,9 +31,15 @@ def homepage():
 def add():
     frame = ''
     emo_entry = emo_list(frame)
-    videos = mongo.db.videos.find()
-    mongo.db.videos.insert_one(emo_entry)
-    return render_template('home.html', videos=videos)
+    video = mongo.db.videos.find_one({'link': emo_entry['link']})
+    if video is None:
+        mongo.db.videos.insert_one(emo_entry)
+        videos = mongo.db.videos.find()
+        return render_template('home.html', videos=videos)
+    else:
+        #check video time, or add emotions.
+        videos = mongo.db.videos.find()
+        return render_template('home.html', videos=videos)
 
 
 @app.route('/find', methods=['POST', 'GET'])
