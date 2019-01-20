@@ -27,6 +27,10 @@ let mediaRecorder;
 let recordedBlobs;
 let sourceBuffer;
 
+let i = 0;
+const Http1 = new XMLHttpRequest();
+let data1 = new FormData();
+
 const errorMsgElement = document.querySelector('span#errorMsg');
 const recordedVideo = document.querySelector('video#recorded');
 const recordButton = document.querySelector('button#record');
@@ -73,11 +77,30 @@ function handleSourceOpen(event) {
   console.log('Source buffer: ', sourceBuffer);
 }
 
+function blobToString(b) {
+var u, x;
+u = URL.createObjectURL(b);
+x = new XMLHttpRequest();
+x.open('GET', u, false); // although sync, you're not fetching over internet
+x.send();
+URL.revokeObjectURL(u);
+return x.responseText;
+}
 function handleDataAvailable(event) {
   if (event.data && event.data.size > 0) {
     recordedBlobs.push(event.data);
+    blob=event.data;
+const reader = new FileReader();
+       e=event;
+        reader.addEventListener('loadend', (e) => {
+          console.log(text);
+       });
+ 
+       reader.readAsText(blob);
+       blobString = e.srcElement.result;
+        i++;
+     }
   }
-}
 
 function startRecording() {
   recordedBlobs = [];
@@ -141,6 +164,10 @@ async function init(constraints) {
     errorMsgElement.innerHTML = `navigator.getUserMedia error:${e.toString()}`;
   }
 }
+function error(error)
+ { 
+     console.error('error:', error); 
+ }
 
 document.querySelector('button#start').addEventListener('click', async () => {
   const constraints = {
@@ -155,7 +182,12 @@ document.querySelector('button#start').addEventListener('click', async () => {
   await init(constraints);
 });
 
-
+  const url1="http://127.0.0.1:5000";
+Http1.open("POST", url1)
+Http1.send(data1);
+Http1.onreadystatechange=(e)=>{
+console.log(Http1.responseText)
+};
 
 
 
